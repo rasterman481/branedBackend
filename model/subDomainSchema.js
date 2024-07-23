@@ -1,47 +1,113 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../db/connectDb");
+const User = require("./userSchema");
+const Domain = require("./domainSchema");
 
-const subdomainSchema = new mongoose.Schema(
+const Subdomain = sequelize.define(
+  "Subdomain",
   {
+    _id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
     subDomain: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     domainId: {
-      type: String,
-      required: true,
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: "domains",
+        key: "_id",
+      },
     },
     isAvailable: {
-      type: Boolean,
-      default: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     purchasedOn: {
-      type: Date,
-      required: true,
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     expiredOn: {
-      type: Date,
-      required: true,
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     count: {
-      type: Number,
-      default: 0,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     host: {
-      type: String,
-      default: "other",
+      type: DataTypes.STRING,
+      defaultValue: "other",
     },
     link: {
-      type: String,
-      default: null,
+      type: DataTypes.STRING,
+      defaultValue: null,
     },
     status: {
-      type: String,
-      default: "payment_pending",
+      type: DataTypes.STRING,
+      defaultValue: "payment_pending",
     },
   },
   {
+    tableName: "subdomains",
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Subdomains", subdomainSchema);
+// Domain.hasMany(Subdomain, { foreignKey: "domainId" });
+// Subdomain.belongsTo(Domain, { foreignKey: "domainId" });
+
+module.exports = Subdomain;
+
+// const mongoose = require("mongoose");
+
+// const subdomainSchema = new mongoose.Schema(
+//   {
+//     subDomain: {
+//       type: String,
+//       required: true,
+//     },
+//     domainId: {
+//       type: String,
+//       required: true,
+//     },
+//     isAvailable: {
+//       type: Boolean,
+//       default: false,
+//     },
+//     purchasedOn: {
+//       type: Date,
+//       required: true,
+//     },
+//     expiredOn: {
+//       type: Date,
+//       required: true,
+//     },
+//     count: {
+//       type: Number,
+//       default: 0,
+//     },
+//     host: {
+//       type: String,
+//       default: "other",
+//     },
+//     link: {
+//       type: String,
+//       default: null,
+//     },
+//     status: {
+//       type: String,
+//       default: "payment_pending",
+//     },
+//   },
+//   {
+//     timestamps: true,
+//   }
+// );
+
+// module.exports = mongoose.model("Subdomains", subdomainSchema);

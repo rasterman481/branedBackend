@@ -1,55 +1,123 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../db/connectDb");
+const User = require("./userSchema");
 
-const domainSchema = new mongoose.Schema(
+const Domain = sequelize.define(
+  "Domain",
   {
     _id: {
-      type: String,
-      required: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
     },
     domain: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "_id",
+      },
     },
     isAvailable: {
-      type: Boolean,
-      default: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
     purchasedOn: {
-      type: Date,
-      required: true,
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     expiredOn: {
-      type: Date,
-      required: true,
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     count: {
-      type: Number,
-      default: 0,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     host: {
-      type: String,
-      default: "other",
+      type: DataTypes.STRING,
+      defaultValue: "other",
     },
     link: {
-      type: String,
-      default: null,
+      type: DataTypes.STRING,
+      defaultValue: null,
     },
     status: {
-      type: String,
-      default: "payment_pending",
+      type: DataTypes.STRING,
+      defaultValue: "payment_pending",
     },
     orderId: {
-      type: String,
+      type: DataTypes.STRING,
     },
   },
   {
+    tableName: "domains",
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Domains", domainSchema);
+User.hasMany(Domain, { foreignKey: "userId" });
+Domain.belongsTo(User, { foreignKey: "userId" });
+
+module.exports = { User, Domain };
+
+// const mongoose = require("mongoose");
+
+// const domainSchema = new mongoose.Schema(
+//   {
+//     _id: {
+//       type: String,
+//       required: true,
+//     },
+//     domain: {
+//       type: String,
+//       required: true,
+//     },
+//     userId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "User",
+//       required: true,
+//     },
+//     isAvailable: {
+//       type: Boolean,
+//       default: true,
+//     },
+//     purchasedOn: {
+//       type: Date,
+//       required: true,
+//     },
+//     expiredOn: {
+//       type: Date,
+//       required: true,
+//     },
+//     count: {
+//       type: Number,
+//       default: 0,
+//     },
+//     host: {
+//       type: String,
+//       default: "other",
+//     },
+//     link: {
+//       type: String,
+//       default: null,
+//     },
+//     status: {
+//       type: String,
+//       default: "payment_pending",
+//     },
+//     orderId: {
+//       type: String,
+//     },
+//   },
+//   {
+//     timestamps: true,
+//   }
+// );
+
+// module.exports = mongoose.model("Domains", domainSchema);
